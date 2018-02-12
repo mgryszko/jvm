@@ -1,7 +1,22 @@
-alias java_ls='/usr/libexec/java_home -V 2>&1 | grep -E "\d.\d.\d_\d\d" | cut -d , -f 1 | colrm 1 4 | grep -v Home'
+#!/usr/bin/env zsh
 
-function java_use() {
-    export JAVA_HOME=$(/usr/libexec/java_home -v $1)
-    export PATH=$JAVA_HOME/bin:$PATH
-    java -version
+java_home='/usr/libexec/java_home'
+
+jvm() {
+  case "$1" in
+    list) $java_home -V ;;
+    use) use_jvm $2 ;;
+    *) print_usage ;;
+  esac
 }
+
+
+use_jvm() {
+  local requested_java_home=`$java_home -v $1`
+  export JAVA_HOME=$requested_java_home
+}
+
+print_usage() {
+  echo "list | use"
+}
+
